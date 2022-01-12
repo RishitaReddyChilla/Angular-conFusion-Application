@@ -1,5 +1,6 @@
 //define typescript class
-export class Dish{
+import { Comment } from './comment';
+export class Dish {
     //define properties
     id!: string;
     name!: string;
@@ -9,5 +10,6 @@ export class Dish{
     label!: string;
     price!: string;
     description!:string;
+    comments!:Comment[];
 
 }
