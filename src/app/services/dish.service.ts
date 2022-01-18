@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Dish } from '../shared/dish';
 import { DISHES } from '../shared/dishes';
-import { of , lastValueFrom } from 'rxjs';
+import { of , lastValueFrom, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 @Injectable({
@@ -11,9 +11,8 @@ export class DishService {
 
   constructor() { }
 
-  getDishes(): Promise<Dish[]> {
-    const getdishes$ = of(DISHES).pipe(delay(2000)); //3d 
-    return lastValueFrom(getdishes$);
+  getDishes(): Observable<Dish[]> {
+    return  of(DISHES).pipe(delay(2000)); //------3rd return promise from observable 
   }
     /* //
     return new Promise(resolve => {
@@ -25,9 +24,14 @@ export class DishService {
     }
     );
   }*/
-  getDish(id: string): Promise<Dish>{
-    const getdish$ = of(DISHES.filter((dish) => (dish.id === id))[0]).pipe(delay(2000));
-    return lastValueFrom(getdish$);
+  /*
+  getDishes(): Promise<Dish[]> {
+    const getdishes$ = of(DISHES).pipe(delay(2000)); //------3d return promise from observable
+    return lastValueFrom(getdishes$);
+  }
+  */
+  getDish(id: string): Observable<Dish>{
+    return of(DISHES.filter((dish) => (dish.id === id))[0]).pipe(delay(2000));
   }
    /* //without timeout
     //return Promise.resolve(DISHES.filter((dish) => (dish.id === id))[0]);
@@ -37,10 +41,16 @@ export class DishService {
     }
     );
   }*/
+
+  /*
+    getDish(id: string): Promise<Dish>{
+    const getdish$ = of(DISHES.filter((dish) => (dish.id === id))[0]).pipe(delay(2000)); //-----3rd return promise from observable
+    return lastValueFrom(getdish$);
+  }
+  */
    
-  getFeaturedDish(): Promise<Dish>{
-    const getfeatureddish$ = of(DISHES.filter((dish) => dish.featured)[0]).pipe(delay(2000));
-    return lastValueFrom(getfeatureddish$);
+  getFeaturedDish(): Observable<Dish>{
+    return  of(DISHES.filter((dish) => dish.featured)[0]).pipe(delay(2000));
     }
     /*//without timeout
     //return Promise.resolve(DISHES.filter((dish) => dish.featured)[0]);
@@ -50,4 +60,12 @@ export class DishService {
     }
     );
   }*/
+
+  /*
+  getFeaturedDish(): Promise<Dish>{
+    const getfeatureddish$ = of(DISHES.filter((dish) => dish.featured)[0]).pipe(delay(2000));//----3rd return promise from observable
+    return lastValueFrom(getfeatureddish$);
+    }
+    */
+
 }
