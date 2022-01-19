@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, NgForm} from '@angular/forms';
 import { Params, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';//to track history
 import { Dish } from '../shared/dish';
 import { DishService } from '../services/dish.service';
 import { switchMap } from 'rxjs/operators';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { Comment} from '../shared/comment';
+
+
 //hello
 
 /*const DISH = {
@@ -63,11 +67,78 @@ export class DishdetailComponent implements OnInit {
   prev!: string;
   next!: string;
 
+  commentForm!: FormGroup;
+  comment!: Comment;//datamodel 
+
+  date!:Date;
+  dateISO!:string;
+
+  @ViewChild('cform') commentFormDirective!:  NgForm;
+
+  formErrors:any= {
+    'author': '',
+    'rating': '',
+    'comment' : ''
+  };
+
+  validationMessages:any = {
+    'author': {
+      'required': 'Author name is required',
+      'minlength': 'Author name must be at least 2 characters long',
+      'maxlength': 'Author name cannot be more than 25 characters'
+    },
+    'rating': {
+      'required': 'Last Name is required.',
+    },
+    'comment': {
+      'required': 'Comment is required.',
+    }
+  };
+
   constructor(private dishService: DishService ,
     private route: ActivatedRoute,
-    private location: Location) { }
+    private location: Location,
+    private fb: FormBuilder) {
+      
+     }
+
+     createForm(){
+      this.commentForm = this.fb.group({
+        author: ['',[Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
+        rating: 5,
+        comment:['',Validators.required]
+      });
+
+      this.commentForm.valueChanges
+      .subscribe(data => this.onValueChanged(data)); //if any error is detected it will be added to js object formerrors above
+      //what to do when value changes
+      this.onValueChanged(); //reset form validation messages
+    }
+
+    onValueChanged(data?: any){//?-data parameter is optional
+      if(!this.commentForm) {
+        return;
+      }
+      const form = this.commentForm;
+      for (const field in this.formErrors) {
+        if (this.formErrors.hasOwnProperty(field)) {
+          // clear previous error message (if any)
+          this.formErrors[field] = '';
+          const control = form.get(field);
+          if (control && control.dirty && !control.valid) {
+            const messages = this.validationMessages[field];
+            for (const key in control.errors) {
+              if (control.errors.hasOwnProperty(key)) {
+                this.formErrors[field] += messages[key] + ' ';
+              }
+            }
+          }
+        }
+      }
+    }
 
   ngOnInit(){
+    this.createForm();
    // let id = this.route.snapshot.params['id'];
     this.dishService.getDishIds()
     .subscribe((dishIds)=>this.dishIds = dishIds);
@@ -86,5 +157,27 @@ export class DishdetailComponent implements OnInit {
   }
   goBack():void{
   this.location.back();
+}
+
+onSubmit(){
+  this.comment = this.commentForm.value;
+  console.log(this.comment);
+  //date
+  this.date = new Date();
+  //ISOstring
+  this.dateISO = this.date.toISOString();
+  this.commentForm.value.date = this.dateISO;
+  this.comment = this.commentForm.value;
+ // console.log(this.comment);
+ //pushing the comment to display below the previous comments
+  this.dish.comments.push(this.comment);
+  //Reset the form
+  this.commentFormDirective.resetForm();
+  this.commentForm.reset({
+    author: '',
+    rating: 5 ,
+    comment: ''
+  });
+  
 }
 }
