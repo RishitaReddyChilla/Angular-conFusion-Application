@@ -75,6 +75,9 @@ export class DishdetailComponent implements OnInit {
 
   errMess!:string;
 
+  //for saving to server
+  dishcopy!:Dish;
+
   @ViewChild('cform') commentFormDirective!:  NgForm;
 
   formErrors:any= {
@@ -148,7 +151,7 @@ export class DishdetailComponent implements OnInit {
 
    this.route.params.pipe(switchMap((params:Params) => this.dishService.getDish(params['id'])))
     .subscribe({next:(dish) => {
-      this.dish = dish; this.setPrevNext(dish.id);
+      this.dish = dish; this.dishcopy=dish;this.setPrevNext(dish.id);
     },
     error: errmess => this.errMess = <any>errmess});
   }
@@ -174,7 +177,18 @@ onSubmit(){
   this.comment = this.commentForm.value;
  // console.log(this.comment);
  //pushing the comment to display below the previous comments
-  this.dish.comments.push(this.comment);
+  //this.dish.comments.push(this.comment);
+  
+  //saving to server
+  this.dishcopy.comments.push(this.comment);
+  
+  this.dishService.putDish(this.dishcopy)
+  .subscribe({next:dish => {
+    this.dish = dish;
+    this.dishcopy = dish;
+  },
+  error: errmess =>{ this.dish=null!; this.dishcopy=null!; this.errMess=<any>errmess;
+  }} );
   //Reset the form
   this.commentFormDirective.resetForm();
   this.commentForm.reset({
