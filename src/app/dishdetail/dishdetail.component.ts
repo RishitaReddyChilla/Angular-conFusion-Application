@@ -73,6 +73,8 @@ export class DishdetailComponent implements OnInit {
   date!:Date;
   dateISO!:string;
 
+  errMess!:string;
+
   @ViewChild('cform') commentFormDirective!:  NgForm;
 
   formErrors:any= {
@@ -145,9 +147,10 @@ export class DishdetailComponent implements OnInit {
     .subscribe((dishIds)=>this.dishIds = dishIds);
 
    this.route.params.pipe(switchMap((params:Params) => this.dishService.getDish(params['id'])))
-    .subscribe((dish) => {
+    .subscribe({next:(dish) => {
       this.dish = dish; this.setPrevNext(dish.id);
-    });
+    },
+    error: errmess => this.errMess = <any>errmess});
   }
 
   setPrevNext(dishId:string){

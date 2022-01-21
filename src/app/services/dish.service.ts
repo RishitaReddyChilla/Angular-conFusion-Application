@@ -5,18 +5,21 @@ import { of , lastValueFrom, Observable, pipe } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { baseURL } from '../shared/baseurl';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import { ProcessHTTPMsgService } from './process-httpmsg.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DishService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private processHTTPMsgService: ProcessHTTPMsgService) { }
 
   getDishes(): Observable<Dish[]> {
     //return  of(DISHES).pipe(delay(2000)); //------3rd return promise from observable 
-    return this.http.get<Dish[]>(baseURL + 'dishes');//server side URL to fetch data
+    return this.http.get<Dish[]>(baseURL + 'dishes')
+    .pipe(catchError(this.processHTTPMsgService.handleError));//server side URL to fetch data
   }
     /* //
     return new Promise(resolve => {
@@ -36,7 +39,8 @@ export class DishService {
   */
   getDish(id: string): Observable<Dish>{
     //return of(DISHES.filter((dish) => (dish.id === id))[0]).pipe(delay(2000));
-    return this.http.get<Dish>(baseURL + 'dishes/' + id);//server side URL to fetch data
+    return this.http.get<Dish>(baseURL + 'dishes/' + id)
+    .pipe(catchError(this.processHTTPMsgService.handleError));//server side URL to fetch data
   }
    /* //without timeout
     //return Promise.resolve(DISHES.filter((dish) => (dish.id === id))[0]);
@@ -56,7 +60,8 @@ export class DishService {
    
   getFeaturedDish(): Observable<Dish>{
    // return  of(DISHES.filter((dish) => dish.featured)[0]).pipe(delay(2000));
-   return this.http.get<Dish[]>(baseURL + 'dishes?featured=true').pipe(map(dishes => dishes[0])); //server side URL to fetch data
+   return this.http.get<Dish[]>(baseURL + 'dishes?featured=true').pipe(map(dishes => dishes[0]))
+   .pipe(catchError(this.processHTTPMsgService.handleError)); //server side URL to fetch data
     }
     /*//without timeout
     //return Promise.resolve(DISHES.filter((dish) => dish.featured)[0]);
@@ -76,7 +81,8 @@ export class DishService {
 
     getDishIds(): Observable<string[] | any>{
      // return of(DISHES.map(dish  => dish.id));
-     return this.getDishes().pipe(map(dishes => dishes.map(dish => dish.id)));
+     return this.getDishes().pipe(map(dishes => dishes.map(dish => dish.id)))
+     .pipe(catchError(error => error));
     }
 
 }

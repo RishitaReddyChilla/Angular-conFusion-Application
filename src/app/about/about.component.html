@@ -69,9 +69,13 @@
             </p>
           </mat-list-item>
         </mat-list>
-        <div [hidden]="leaders"><!--//shows only if dishes is null-->
+        <div [hidden]="leaders || errMess"><!--//shows only if dishes is null-->
           <mat-spinner></mat-spinner> <h4>Loading . . . Please Wait</h4>
         </div>
+        <div fxFlex *ngIf="errMess">
+          <h2>Error</h2>
+          <h4>{{errMess}}</h4>
+      </div>
 
   </div>
 </div>
