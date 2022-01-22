@@ -7,7 +7,7 @@ import { DishService } from '../services/dish.service';
 import { switchMap } from 'rxjs/operators';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Comment} from '../shared/comment';
-import { trigger, state, style, animate, transition} from '@angular/animations';
+import { visibility, flyInOut, expand } from '../animations/app.animation';
 
 
 //hello
@@ -59,18 +59,15 @@ import { trigger, state, style, animate, transition} from '@angular/animations';
   selector: 'app-dishdetail',
   templateUrl: './dishdetail.component.html',
   styleUrls: ['./dishdetail.component.scss'],
+  host:{
+    //make sure animation occur when route changes occur
+    '[@flyInOut]': 'true',
+    'style': 'display: block;'
+  },
   animations: [
-    trigger('visibility',[
-      state('show', style({
-        transform: 'scale(1.0)',
-        opacity: 1
-      })),
-      state('hidden',style({
-        transform: 'scale(0.5)',
-        opacity: 0
-      })),
-      transition('*=>*',animate('0.5s ease-in-out'))
-    ])
+    flyInOut(),
+    visibility(),
+    expand()
   ]
 })
 export class DishdetailComponent implements OnInit {

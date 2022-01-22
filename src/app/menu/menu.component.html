@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    <div fxFlex *ngIf="dishes"><!--//shows only if dishes is not null-->
+    <div fxFlex *ngIf="dishes" [@expand]><!--//shows only if dishes is not null-->
     <mat-grid-list cols="2" rowHeight="200px">
         <mat-grid-tile *ngFor="let dish of dishes" [routerLink]="['/dishdetail',dish.id]" appHighlight>
             <img height="200px" src="{{ BaseURL + dish.image }}" alt={{dish.name}}>
