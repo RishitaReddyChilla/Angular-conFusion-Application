@@ -1,7 +1,11 @@
-import { Component, OnInit , ViewChild} from '@angular/core';
+import { Component, OnInit , ViewChild, Inject} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, NgForm} from '@angular/forms';
+import { Params, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';//to track history
 import { Feedback, ContactType} from '../shared/feedback';
+import { switchMap } from 'rxjs/operators';
 import { flyInOut } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
@@ -20,6 +24,8 @@ export class ContactComponent implements OnInit {
   feedbackForm!: FormGroup;
   feedback!: Feedback;//datamodel 
   contactType = ContactType;
+  errMess!: string;
+  feedbackcopy!:Feedback;
   @ViewChild('fform') feedbackFormDirective!:  NgForm;
 
   formErrors:any= {
@@ -51,11 +57,16 @@ export class ContactComponent implements OnInit {
 
   };
 
-  constructor(private fb: FormBuilder) { 
+  constructor(private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private location: Location,
+    private feedbackService: FeedbackService,
+    @Inject('BaseURL') public BaseURL: string) { 
     this.createForm();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    
   }
   createForm(){
     this.feedbackForm = this.fb.group({
@@ -99,7 +110,17 @@ export class ContactComponent implements OnInit {
   }
   onSubmit(){
     this.feedback = this.feedbackForm.value;
+    this.feedbackcopy = this.feedbackForm.value;
     console.log(this.feedback);
+    //this.feedbackcopy.comments.push(this.comment);
+  
+    this.feedbackService.submitFeedback(this.feedbackcopy)
+    .subscribe({next:feedback => {
+      this.feedback = feedback;
+      this.feedbackcopy = feedback;
+    },
+    error: errmess =>{ this.feedback=null!; this.feedbackcopy=null!; this.errMess=<any>errmess;
+    }} );
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
