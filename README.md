@@ -6,6 +6,12 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+- Create a local folder named 'json-server'
+- Create a folder named 'public' inside json-server folder
+- Copy the 'images' folder from assets folder (in 'src' folder) to the 'public' folder
+- Copy the 'db.json' file from assets folder (in 'src' folder) to the 'json-server' folder
+- Now, use the json-server to fetch details by navigating to the json-server folder on command prompt and run `json-server --watch jb.json -d 2000`
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
