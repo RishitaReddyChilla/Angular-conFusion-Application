@@ -10,7 +10,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 - Create a folder named 'public' inside 'json-server' folder
 - Copy the 'images' folder from assets folder (in 'src' folder) to the 'public' folder
 - Copy the 'db.json' file from assets folder (in 'src' folder) to the 'json-server' folder
-- Now, use the json-server to fetch details by navigating to the json-server folder on command prompt and run `json-server --watch jb.json -d 2000`
+- Now, use the json-server to fetch data by navigating to the json-server folder on command prompt and run `json-server --watch jb.json -d 2000`
 
 ## Code scaffolding
 
